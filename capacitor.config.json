@@ -1,0 +1,11 @@
+{
+  "appId": "com.iith.gpacalculator",
+  "appName": "IITH GPA Calculator",
+  "webDir": "www",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 3000,
+      "androidScaleType": "CENTER_CROP"
+    }
+  }
+}
