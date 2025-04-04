@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "url": "https://IITH-GPA-Calculator.com",
+            "name": "IIT Hyderabad GPA Calculator",
+            "logo": "https://IITH-GPA-Calculator.com"/WEB.png",
+            "image": "https://IITH-GPA-Calculator.com"/WEB.png"
+        }
+        </script>
+    
+    <!-- Also add Open Graph tags for social sharing -->
+    <meta property="og:image" content="https://IITH-GPA-Calculator.com/WEB.png">
+    <meta property="og:title" content="IIT Hyderabad GPA Calculator">
+    <link rel="icon" href="WEB.png" type="image/png">
+    <meta property="og:description" content="Official SGPA/CGPA calculator for IIT Hyderabad students">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>[IITH]GPA Calculator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            padding: 15px;
+            min-height: 100vh;
+            display: none;
+        }
+
+        .active-page {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            height: 140px;
+            left: 15px;
+            margin-right: 0px;
+        }
+
+        .main-title {
+            flex-grow: 1;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: #1a237e;
+            text-align: center;
+        }
+
+        .home-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background-color: #3f51b5;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 200px; /* Add fixed width */
+        }
+
+        button:active {
+            transform: scale(0.98);
+            background-color: #303f9f;
+        }
+
+        .back-button {
+            background-color: #666;
+            margin-bottom: 20px;
+        }
+
+        .course-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            padding: 10px 0;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .semester-form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .grade-table {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            min-width: 600px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        th {
+            background-color: #3f51b5;
+            color: white;
+        }
+
+        .result {
+            padding: 15px;
+            margin: 20px 0;
+            background-color: #4caf50;
+            color: white;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Home Page -->
+    <div class="container active-page" id="home-page">
+        <div class="header">
+            <img src="iit-hyderabad-logo.png" alt="IIT Hyderabad Logo" class="logo">
+            <h1 class="main-title">GPA Calculator</h1>
+        </div>
+
+        <div class="home-buttons">
+            <button onclick="showPage('sgpa')">SGPA Calculator</button>
+            <button onclick="showPage('cgpa')">CGPA Calculator</button>
+        </div>
+    </div>
+
+    <!-- SGPA Calculator Page -->
+    <div class="container" id="sgpa-page">
+        <button class="back-button" onclick="showPage('home')">← Back</button>
+        <div class="header">
+            <img src="iit-hyderabad-logo.png" alt="IIT Hyderabad Logo" class="logo">
+            <h1 class="main-title">SGPA Calculator</h1>
+        </div>
+
+        <div class="calculator-section">
+            <select id="semester">
+                <option value="1">Semester 1</option>
+                <option value="2">Semester 2</option>
+                <option value="3">Semester 3</option>
+                <option value="4">Semester 4</option>
+                <option value="5">Semester 5</option>
+                <option value="6">Semester 6</option>
+                <option value="7">Semester 7</option>
+                <option value="8">Semester 8</option>
+            </select>
+            <div id="sgpa-courses"></div>
+            <button onclick="addCourse('sgpa')">+ Add Course</button>
+            <button onclick="calculateSGPA()">Calculate SGPA</button>
+            <div id="sgpa-result" class="result"></div>
+        </div>
+
+        <div class="grade-table">
+            <table>
+                <tr>
+                    <th>A+/A</th><th>A-</th><th>B</th><th>B-</th><th>C</th><th>C-</th><th>D</th><th>P</th><th>S/U</th><th>AU</th><th>F</th>
+                </tr>
+                <tr>
+                    <td>10</td><td>9</td><td>8</td><td>7</td><td>6</td><td>5</td><td>4</td><td>2</td><td>0</td><td>0</td><td>0</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- CGPA Calculator Page -->
+    <div class="container" id="cgpa-page">
+        <button class="back-button" onclick="showPage('home')">← Back</button>
+        <div class="header">
+            <img src="iit-hyderabad-logo.png" alt="IIT Hyderabad Logo" class="logo">
+            <h1 class="main-title">CGPA Calculator</h1>
+        </div>
+
+        <div class="calculator-section">
+            <div class="previous-inputs">
+                <input type="number" step="0.01" id="previous-cgpa" placeholder="Previous CGPA (if any)">
+                <input type="number" id="previous-credits" placeholder="Previous Credits (if any)">
+            </div>
+            <div id="cgpa-semesters"></div>
+            <button onclick="addSemester()">+ Add Semester</button>
+            <button onclick="calculateCGPA()">Calculate CGPA</button>
+            <div id="cgpa-result" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const gradePoints = {
+            'A+': 10, 'A': 10, 'A-': 9,
+            'B': 8, 'B-': 7, 'C': 6,
+            'C-': 5, 'D': 4, 'P': 2,
+            'S/U': 0, 'AU': 0, 'F': 0
+        };
+
+        function showPage(pageId) {
+            document.querySelectorAll('.container').forEach(page => {
+                page.classList.remove('active-page');
+            });
+            document.getElementById(`${pageId}-page`).classList.add('active-page');
+            window.scrollTo(0, 0);
+        }
+
+        // SGPA Calculator Functions
+        function addCourse(type) {
+            const container = document.getElementById(`${type}-courses`);
+            const courseDiv = document.createElement('div');
+            courseDiv.className = 'course-form';
+            courseDiv.innerHTML = `
+                <input type="text" placeholder="Code">
+                <input type="text" placeholder="Title">
+                <input type="number" placeholder="Credits" min="1">
+                <select>
+                    ${Object.keys(gradePoints).map(g => `<option value="${g}">${g}</option>`).join('')}
+                </select>
+                <button onclick="this.parentElement.remove()" style="background-color: #f44336; padding: 8px;">×</button>
+            `;
+            container.appendChild(courseDiv);
+        }
+
+        function calculateSGPA() {
+            const courses = document.querySelectorAll('#sgpa-courses .course-form');
+            let total = 0, credits = 0;
+            
+            courses.forEach(course => {
+                const cred = Number(course.querySelector('input[type="number"]').value) || 0;
+                const grade = course.querySelector('select').value;
+                total += cred * gradePoints[grade];
+                credits += cred;
+            });
+
+            const sgpa = credits ? (total / credits).toFixed(2) : 0;
+            document.getElementById('sgpa-result').innerHTML = `
+                SGPA: ${sgpa}<br>
+                Total Credits: ${credits}
+            `;
+        }
+
+        // CGPA Calculator Functions
+        function addSemester() {
+            const container = document.getElementById('cgpa-semesters');
+            const semesterCount = container.children.length + 1;
+            
+            const semesterDiv = document.createElement('div');
+            semesterDiv.className = 'semester-form';
+            semesterDiv.innerHTML = `
+                <h3>Semester ${semesterCount}</h3>
+                <input type="number" step="0.01" placeholder="SGPA" class="semester-sgpa">
+                <input type="number" placeholder="Credits" class="semester-credits">
+                <button onclick="this.parentElement.remove()" 
+                        style="background-color: #f44336; padding: 8px; margin-left: 10px;">
+                    ×
+                </button>
+            `;
+            container.appendChild(semesterDiv);
+        }
+
+        function calculateCGPA() {
+            let totalPoints = 0;
+            let totalCredits = 0;
+
+            // Previous CGPA
+            const prevCGPA = parseFloat(document.getElementById('previous-cgpa').value) || 0;
+            const prevCredits = parseFloat(document.getElementById('previous-credits').value) || 0;
+            totalPoints += prevCGPA * prevCredits;
+            totalCredits += prevCredits;
+
+            // Current semesters
+            document.querySelectorAll('.semester-form').forEach(semester => {
+                const sgpa = parseFloat(semester.querySelector('.semester-sgpa').value) || 0;
+                const credits = parseFloat(semester.querySelector('.semester-credits').value) || 0;
+                
+                totalPoints += sgpa * credits;
+                totalCredits += credits;
+            });
+
+            const cgpa = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : 0;
+            document.getElementById('cgpa-result').innerHTML = `
+                CGPA: <strong>${cgpa}</strong><br>
+                Total Credits: ${totalCredits}
+            `;
+        }
+    </script>
+</body>
+</html>
